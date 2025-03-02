@@ -11,7 +11,7 @@ import mdx from '@astrojs/mdx';
 // https://astro.build/config
 export default defineConfig({
     site: 'https://daqingliu.github.io',
-    base: 'aigc-from-scratch',
+    base: 'tutorial',
     integrations: [starlight({
         title: 'AIGC From Scratch',
 		defaultLocale: 'zh-CN',
