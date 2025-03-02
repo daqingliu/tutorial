@@ -1,28 +1,46 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import remarkMdxImages from 'remark-mdx-images';
+import { remarkModifiedTime } from './remark-modified-time.mjs';
+import mdx from '@astrojs/mdx';
+
 
 // https://astro.build/config
 export default defineConfig({
-	integrations: [
-		starlight({
-			title: 'My Docs',
-			social: {
-				github: 'https://github.com/withastro/starlight',
-			},
-			sidebar: [
-				{
-					label: 'Guides',
-					items: [
-						// Each item here is one entry in the navigation menu.
-						{ label: 'Example Guide', slug: 'guides/example' },
-					],
-				},
-				{
-					label: 'Reference',
-					autogenerate: { directory: 'reference' },
-				},
-			],
+    site: 'https://daqingliu.github.io',
+    base: 'aigc-from-scratch',
+    integrations: [starlight({
+        title: 'AIGC From Scratch',
+		defaultLocale: 'zh-CN',
+        lastUpdated: true,
+        customCss: [
+			'./src/styles/custom.css',
+            "/node_modules/katex/dist/katex.min.css",
+          ],
+        social: {
+            github: 'https://github.com/daqingliu',
+        },
+        sidebar: [
+            {
+                label: 'Diffusion Model',
+                autogenerate: { directory: 'diffusion-model' },
+            },
+            {
+                label: 'Diffusers',
+                autogenerate: { directory: 'diffusers' },
+            },
+            {
+                label: 'ComfyUI',
+                autogenerate: { directory: 'comfyui' },
+            },
+        ],
 		}),
-	],
+        mdx()],
+    markdown: {
+        remarkPlugins: [remarkMath, remarkMdxImages, remarkModifiedTime],
+        rehypePlugins: [rehypeKatex],
+      },
 });
