@@ -12,6 +12,8 @@
   "dependencies": {
     "@astrojs/mdx": "^4.1.0",
     "@astrojs/starlight": "^0.32.2",
+    "@expressive-code/plugin-collapsible-sections": "^0.40.2",
+    "@expressive-code/plugin-line-numbers": "^0.40.2",
     "astro": "^5.1.5",
     "dayjs": "^1.11.13",
     "katex": "^0.16.21",

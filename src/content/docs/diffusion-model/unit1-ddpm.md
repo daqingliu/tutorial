@@ -22,7 +22,7 @@ lastUpdated: true
 
 从生成模型的数学框架出发，其核心目标是在数据空间 $\mathcal{X}$（如[x, y]的2D分布数据、[3\*H\*W]的图像数据、[3\*H\*W\*T]的视频数据等）中用网络输出的分布 $q_\theta(x|z)$ 逼近真实数据的分布 $p^{*}(x)$：
 $$
-p_\theta(x|z) \leftarrow p^{*}(x)
+p_\theta(x|z) \leftarrow p^{*}(x) \tag{1}
 $$
 
 在这个大的目标下，不同的生成范式采用了不同的数学方法，比如：
@@ -452,7 +452,7 @@ dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 ```
 
 
-```python
+```python title='ipynb'
 # ====================
 # 训练循环
 # ====================
@@ -480,9 +480,9 @@ for epoch in tqdm(range(epochs), desc="Training"):
         loss_history.append(loss.item())
 ```
 
-    Training: 100%|██████████| 1000/1000 [00:37<00:00, 26.99it/s]
-
-
+```bash
+Training: 100%|██████████| 1000/1000 [00:37<00:00, 26.99it/s]
+```
 
 ```python
 plt.figure(figsize=(12, 3))

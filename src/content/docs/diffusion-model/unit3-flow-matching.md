@@ -12,7 +12,7 @@ lastUpdated: true
 
 在这三要素确定后我们便很容易地能够实现 Diffusion Model 的训练及采样过程：
 
-``` python
+``` python showLineNumbers
 # 训练过程
 for x_0, c in batch:
     # 时间步及噪声采样
