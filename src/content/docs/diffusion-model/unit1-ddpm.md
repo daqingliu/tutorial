@@ -16,14 +16,12 @@ lastUpdated: true
 - **逆向生成（噪声去噪）**：
 物理上自发逆向扩散需违反熵增定律，但但扩散模型通过数据驱动的统计学习实现了等效操作。其核心是构建一种“逆向动力学”——模型在训练阶段通过观测大量正向扩散轨迹，隐式拟合出能够表征数据分布结构的概率流场。这一概率流场在微观层面等效于一个虚拟的“驱动力场”，其方向始终指向原始数据分布的高密度区域（即墨滴的初始低熵态）。生成过程中，模型基于当前噪声状态解析出概率流场的局部梯度信息，逐步修正各自由度（如像素）的取值，使系统沿自由能下降方向演化，最终将无序噪声重新组织为符合训练数据统计规律的有序结构。
 
-<!-- ![DiffusionProcess](imgs/illustration_diffusion_process.jpg) -->
+![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303225500936.jpg)
 
 ### 数学理解
 
 从生成模型的数学框架出发，其核心目标是在数据空间 $\mathcal{X}$（如[x, y]的2D分布数据、[3\*H\*W]的图像数据、[3\*H\*W\*T]的视频数据等）中用网络输出的分布 $q_\theta(x|z)$ 逼近真实数据的分布 $p^{*}(x)$：
-$$
-p_\theta(x|z) \leftarrow p^{*}(x) \tag{1}
-$$
+$$ p_\theta(x|z) \leftarrow p^{*}(x) $$
 
 在这个大的目标下，不同的生成范式采用了不同的数学方法，比如：
 
@@ -32,13 +30,9 @@ $$
 - **AR** 通过自回归分解 $p(x) = \prod_{i=1}^D p(x_i|x_{<i})$ 建模数据分布 $p^{*}$。
 
 而 Diffusion Model 则将数据生成建模为一个马尔可夫扩散过程，将原始数据分布 $p^{*}(x)$ 逐步扰动至高斯噪声 $\mathcal{N}(0, I)$，从而构造一个可逆的概率轨迹：
-$$
-p^{*} = p_0 \rightarrow p_1 \rightarrow \cdots \rightarrow p_{T-1} \rightarrow p_T = \mathcal{N}(0, I)
-$$
+$$p^{*} = p_0 \rightarrow p_1 \rightarrow \cdots \rightarrow p_{T-1} \rightarrow p_T = \mathcal{N}(0, I)$$
 不同于直接拟合最终数据分布，Diffusion Model 拟合的是该逆轨迹的转移概率：
-$$
-q_\theta(x_{t-1}|x_t) \leftarrow q(x_{t-1}|x_t) = p_{t \rightarrow t-1}
-$$
+$$q_\theta(x_{t-1}|x_t) \leftarrow q(x_{t-1}|x_t) = p_{t \rightarrow t-1} $$
 
 ## Diffusion 的前向过程
 
@@ -78,7 +72,7 @@ print(data[0])
 
 
     
-<!-- ![png](2d_swiss_roll_files/2d_swiss_roll_8_0.png) -->
+![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303225533287.png)
     
 
 
@@ -91,9 +85,7 @@ print(data[0])
 ### 前向过程的递推形式
 
 在基于高斯的前向过程中，我们将在任意时刻$t$的加噪转移概率构造为：
-$$
-q(\mathbf{x}_t | \mathbf{x}_{t-1}) = \mathcal{N}(\mathbf{x}_t; \sqrt{1-\beta_t}\mathbf{x}_{t-1}, \beta_t\mathbf{I})
-$$
+$$q(\mathbf{x}_t | \mathbf{x}_{t-1}) = \mathcal{N}(\mathbf{x}_t; \sqrt{1-\beta_t}\mathbf{x}_{t-1}, \beta_t\mathbf{I})$$
 
 > 初学者一般会在这儿卡住，为什么这里要这么设计，突然出现的$\beta_t$又是什么？
 从信息的角度来讲，这是在将原信号$x_{t-1}$ 与噪声信号$N(0,I)$通过缩放系数$\sqrt{1-\beta_t}$和$\sqrt{\beta_t}$进行“调制”后叠加，这里每经过一步原信号就会衰减一些，而噪声信号就会增大一些，经过足够大的步数之后，信号就只剩噪声信号了。
@@ -102,9 +94,7 @@ $$
 这里我们称 $\beta_t$ 为噪声方差系数，$\{\beta_0, \cdots, \beta_T\}$则被称为噪声调度器(Noise Scheduler)。
 
 在实际中，如果我们要从上述转移概率分布中随机采样一个样本，这个过程是无法反传梯度的。因此这里我们使用了一个重参数化(reparameterization trick)的技巧，我们可以通过采样一个标准高斯噪声 $\mathbf{\epsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$ 将随机性引到该独立的随机变量中，从而确定:
-$$
-\mathbf{x}_t = \sqrt{1 -\beta_t} \mathbf{x}_{t-1} + \sqrt{\beta_t} \mathbf{\epsilon}
-$$
+$$\mathbf{x}_t = \sqrt{1 -\beta_t} \mathbf{x}_{t-1} + \sqrt{\beta_t} \mathbf{\epsilon}$$
 
 
 ```python
@@ -142,10 +132,9 @@ plt.show()
 plt.close()
 ```
 
-
     
-<!-- ![png](2d_swiss_roll_files/2d_swiss_roll_16_0.png) -->
-    
+![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303225559565.png)
+   
 
 
 这样我们就可以实现整个前向过程了：
@@ -184,16 +173,14 @@ plt.close()
 
 
     
-<!-- ![png](2d_swiss_roll_files/2d_swiss_roll_18_1.png) -->
+![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303225622061.png)
     
 
 
 ### 前向过程的解析解
 
 除了通过递推形式进行前向过程，我们也可以根据高斯分布的特性 (sums of Gaussians is also Gaussian) 直接求出从$x_0$到任意时刻$x_t$的转移概率：
-$$
-q(\mathbf{x}_t | x_0) = \mathcal{N}(\mathbf{x}_t; \sqrt{\bar{\alpha}_t}\mathbf{x}_0, (1-\bar{\alpha}_t)\mathbf{I})
-$$
+$$q(\mathbf{x}_t | x_0) = \mathcal{N}(\mathbf{x}_t; \sqrt{\bar{\alpha}_t}\mathbf{x}_0, (1-\bar{\alpha}_t)\mathbf{I})$$
 其中 $\alpha_t = 1 - \beta_t$， $\bar{\alpha}_t = \prod_{s=1}^t \alpha_s$。
 
 简略推导过程：
@@ -228,10 +215,7 @@ axes[1].plot(sqrt_one_minus_alphas_cumprod)
 plt.show()
 plt.close()
 ```
-
-
-    
-<!-- ![png](2d_swiss_roll_files/2d_swiss_roll_21_0.png) -->
+![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303225639759.png)
     
 
 
@@ -266,9 +250,7 @@ plt.show()
 plt.close()
 ```
 
-
-    
-<!-- ![png](2d_swiss_roll_files/2d_swiss_roll_23_0.png) -->
+![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303225658886.png)
     
 
 
@@ -315,40 +297,28 @@ class NoiseScheduler:
 如我们在数学理解一节中所述，我们的目标是通过网络拟合反向过程的分布 $q_\theta(x_{t-1}|x_t) \leftarrow q(x_{t-1}|x_t)$。然而，我们无法直接 estimate $p(x_{t-1}|x_t)$ ，其需要统计整个数据集的分布得到。
 
 但在 $\beta_t$ 足够小时，$p(x_{t-1}|x_t)$ 也是一个高斯分布（简略证明思路：通过贝叶斯公式和泰勒展开，在 $T$ 足够大时，反向过程 $p(x_{t-1}|x_t)$ 将由展开项中的 $p(x_t|x_{t-1})$ 主导，因此其也符合高斯分布），即：
-$$
-p_\theta(x_{t-1}|x_t)=\mathcal{N}(x_{t-1};\mu_\theta(x_t,t),\Sigma_\theta(x_t,t))
-$$
+$$p_\theta(x_{t-1}|x_t)=\mathcal{N}(x_{t-1};\mu_\theta(x_t,t),\Sigma_\theta(x_t,t))$$
 
 因此，我们通过训练一个模型来预测该分布的均值和方差。在 DDPM 中，该方差被固定为$\Sigma_\theta(\mathbf{x}_t,t)=\sigma_t^2\mathbf{I},\sigma_t^2:=\beta_t$，因此模型只需预测均值$\mu_\theta$。
 
 另一方面，在给定 $x_0$ 时，我们可以去处理 $q(x_{t-1}|x_t,x_0)$：
 
-$$
-q(x_{t-1}|x_t,x_0) = q(x_t|x_{t-1},x_0) \frac{q(x_{t-1}|x_0)}{q(x_t|x_0)}
-$$
+$$ q(x_{t-1}|x_t,x_0) = q(x_t|x_{t-1},x_0) \frac{q(x_{t-1}|x_0)}{q(x_t|x_0)} $$
 
 上式右边各项都是已知的前向过程，并且各项都是高斯分布，通过写出其概率密度函数，并整理（过程略），有：
-$$
-\tilde{\mu}_t(x_t, x_0) = \frac{\sqrt{\alpha_t}(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_{t}} x_t + \frac{\sqrt{\bar{\alpha}_{t-1}}\beta_t}{1-\bar{\alpha}_{t}} x_0
-$$
+$$ \tilde{\mu}_t(x_t, x_0) = \frac{\sqrt{\alpha_t}(1-\bar{\alpha}_{t-1})}{1-\bar{\alpha}_{t}} x_t + \frac{\sqrt{\bar{\alpha}_{t-1}}\beta_t}{1-\bar{\alpha}_{t}} x_0 $$
 
 进一步代入前向过程的解析解，$\mathbf{x}_t = \sqrt{\bar{\alpha}_t} \mathbf{x}_{0} + \sqrt{1-\bar{\alpha}_t} \mathbf{\epsilon_t}$，消掉 $x_0$，有：
-$$
-\tilde{\mu}_t=\frac{1}{\sqrt{\alpha_t}}(\mathbf{x}_t-\frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\epsilon_t)
-$$
+$$\tilde{\mu}_t=\frac{1}{\sqrt{\alpha_t}}(\mathbf{x}_t-\frac{\beta_t}{\sqrt{1-\bar{\alpha}_t}}\epsilon_t)$$
 
 同理，也可以推导出方差：
-$$
-\sigma_t^2 = \frac{1-\bar{\alpha}_{t-1}}{1-\bar{\alpha}_t}\beta_t
-$$
+$$\sigma_t^2 = \frac{1-\bar{\alpha}_{t-1}}{1-\bar{\alpha}_t}\beta_t$$
 
 上述等式右边只有 $\epsilon_t$ 未知，因此预测均值 $\mu_\theta$ 也可以等价为预测噪声 $\epsilon_\theta$，同时，也可以等价于预测原图 $(x_0)_\theta$。
 
 进一步地，在进行上述模型训练时，对于真实的训练样本数据已知，要求模型的参数，可以使用极大似然估计，并使用变分下界(VLB)来优化负对数似然，这一部分推导出来（过程略）是一个极其符合直觉的结论，即其等价于优化在所有时间步上对噪声预测误差的期望！
 因此，我们的优化目标极为简洁：
-$$
-L=\Vert\epsilon-\epsilon_\theta(x_t, t)\rVert^2
-$$
+$$L=\Vert\epsilon-\epsilon_\theta(x_t, t)\rVert^2$$
 
 至此，我们完成了 Diffusion 的反向过程的推导，接下来我们将通过瑞士卷分布具体地实现它。
 
@@ -428,7 +398,7 @@ class DiffusionModel(nn.Module):
 
 根据上述的推导过程，我们可以得到如下的训练算法：
 
-![algo_train](imgs/algo_diffusion_training.jpg)
+![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303225314524.jpg)
 
 
 ```python
@@ -452,7 +422,7 @@ dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 ```
 
 
-```python title='ipynb'
+```python
 # ====================
 # 训练循环
 # ====================
@@ -480,9 +450,9 @@ for epoch in tqdm(range(epochs), desc="Training"):
         loss_history.append(loss.item())
 ```
 
-```bash
-Training: 100%|██████████| 1000/1000 [00:37<00:00, 26.99it/s]
-```
+    Training: 100%|██████████| 1000/1000 [00:37<00:00, 26.99it/s]
+
+
 
 ```python
 plt.figure(figsize=(12, 3))
@@ -490,17 +460,13 @@ plt.plot(loss_history)
 plt.show()
 ```
 
-
-    
-<!-- ![png](2d_swiss_roll_files/2d_swiss_roll_36_0.png) -->
-    
-
+![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303225724819.png)
 
 ### 采样过程
 
 在采样时，我们通过模型预测噪声 $\epsilon$ 进而得到均值 $\mu_t$，而方差是预先算好的，即 $\sigma_t = \beta_t I$ 据此再利用重参数化技巧进行采样，即可得到其采样的算法：
 
-<!-- ![algo_sampling](imgs/algo_diffusion_sampling.jpg) -->
+![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303225414964.jpg)
 
 这里要稍微注意在 $t=1$ 时，$\bar{\alpha}_t$ 是没有定义的，因此设 $z=0$。
 
@@ -566,11 +532,7 @@ plt.show()
 plt.close()
 ```
 
-
-    
-<!-- ![png](2d_swiss_roll_files/2d_swiss_roll_42_0.png) -->
-    
-
+![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303225738693.png)
 
 如上，在本文中，我们使用了一个简单的 2D 瑞士卷分布作为例子，通过 DDPM 完成了其分布的学习。
 
