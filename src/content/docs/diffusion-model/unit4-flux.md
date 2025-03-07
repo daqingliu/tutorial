@@ -4,7 +4,7 @@ description: Flux.1-dev 网络结构详解
 lastUpdated: true
 ---
 
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250302232842466.jpeg)
+![](http://img.daqing.host/assets/20250302232842466.jpeg)
 
 ## 输入准备
 
@@ -222,7 +222,7 @@ plt.grid(True)
 plt.show()
 ```
 
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303221808563.png)
+![](http://img.daqing.host/assets/20250303221808563.png)
 
 
 ```python
@@ -620,7 +620,7 @@ plt.ylabel('Value')
 plt.show()
 ```
     
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303221740255.png)
+![](http://img.daqing.host/assets/20250303221740255.png)
 
 ### RoPE位置编码
 
@@ -714,7 +714,7 @@ pe = torch.cat(
 
 到此，我们就完成了网络的预处理部分：
 
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303155941221.png)
+![](http://img.daqing.host/assets/20250303155941221.png)
 
 
 ```python
@@ -728,7 +728,7 @@ print(img.size(), txt.size(), vec.size(), pe.size())
 
 接下来就是网络中最重要的两个模块了，DualStream 和 SingleStream。我们先分析 DualStream。
 
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303161607441.png)
+![](http://img.daqing.host/assets/20250303161607441.png)
 
 
 ```python
@@ -799,7 +799,7 @@ res = summary(block,
 
 这里的 Modulation（调制） 对应的是 DiT 中的 AdaLN_Zero，生成三个调制变量：`shift`, `scale`, `gate`，分别用于调特征的均值、方差，以及作为门控。
 
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303171049153.png)
+![](http://img.daqing.host/assets/20250303171049153.png)
 
 
 ```python
@@ -843,7 +843,7 @@ print(img_mod1.shift.size(), img_mod1.scale.size(), img_mod1.gate.size())
 
 接下来就是`img`和`txt`经过调制再经过的各自的 LayerNorm，并算出 qkv。
 
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303173422813.png)
+![](http://img.daqing.host/assets/20250303173422813.png)
 
 注意，这里虽然用了 img_attn = SelfAttention，但实际上只是用了其中的参数，而最终的计算是放在后面的。即一个 DoubleStreamBlock 只执行了一次真正的 attention。
 
@@ -936,7 +936,7 @@ print(txt_attn.size(), img_attn.size())
 
 在做完 Attention 后还有些收尾的工作，主要是进行linear、门控、Norm、调制、残差。
 
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303173719212.png)
+![](http://img.daqing.host/assets/20250303173719212.png)
 
 
 ```python
@@ -953,7 +953,7 @@ txt = txt + txt_mod2.gate * block.txt_mlp((1 + txt_mod2.scale) * block.txt_norm2
 
 SingleStream 的主要网络结构和 DoubleStream 很像。但是这里注意有两点变化：1. SingleStream 在 attention 的时候额外计算了一个 mlp； 2. 在最后输出的地方， DoubleStream 对每个分支做了一个 mlp (因而 double 有两组调制，而 single 只有一组)。
 
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303185806342.png)
+![](http://img.daqing.host/assets/20250303185806342.png)
 
 
 ```python
@@ -984,7 +984,7 @@ img = img + mod.gate * output
 
 在 SingleStream 的输出之后，稍加处理即可作为最终的输出了。
 
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303193407473.png)
+![](http://img.daqing.host/assets/20250303193407473.png)
 
 
 ```python

@@ -345,7 +345,7 @@ plt.show()
 
 
     
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303232302980.png)
+![](http://img.daqing.host/assets/20250303232302980.png)
     
 
 
@@ -381,7 +381,7 @@ plt.show()
 
 
     
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303232320579.png)
+![](http://img.daqing.host/assets/20250303232320579.png)
     
 
 
@@ -411,7 +411,7 @@ plt.show()
 
 
     
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303232334717.png)
+![](http://img.daqing.host/assets/20250303232334717.png)
     
 
 
@@ -477,7 +477,7 @@ plt.show()
 
 
     
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303232358256.png)
+![](http://img.daqing.host/assets/20250303232358256.png)
     
 
 
@@ -543,7 +543,7 @@ plt.show()
 
 
     
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303232411244.png)
+![](http://img.daqing.host/assets/20250303232411244.png)
     
 
 
@@ -609,7 +609,7 @@ plt.show()
 
 
     
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303232432539.png)
+![](http://img.daqing.host/assets/20250303232432539.png)
     
 
 
@@ -617,7 +617,7 @@ plt.show()
 
 
 
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303232445954.png)
+![](http://img.daqing.host/assets/20250303232445954.png)
     
 
 

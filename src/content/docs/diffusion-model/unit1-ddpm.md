@@ -16,7 +16,7 @@ lastUpdated: true
 - **逆向生成（噪声去噪）**：
 物理上自发逆向扩散需违反熵增定律，但但扩散模型通过数据驱动的统计学习实现了等效操作。其核心是构建一种“逆向动力学”——模型在训练阶段通过观测大量正向扩散轨迹，隐式拟合出能够表征数据分布结构的概率流场。这一概率流场在微观层面等效于一个虚拟的“驱动力场”，其方向始终指向原始数据分布的高密度区域（即墨滴的初始低熵态）。生成过程中，模型基于当前噪声状态解析出概率流场的局部梯度信息，逐步修正各自由度（如像素）的取值，使系统沿自由能下降方向演化，最终将无序噪声重新组织为符合训练数据统计规律的有序结构。
 
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303225500936.jpg)
+![](http://img.daqing.host/assets/20250303225500936.jpg)
 
 ### 数学理解
 
@@ -72,7 +72,7 @@ print(data[0])
 
 
     
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303225533287.png)
+![](http://img.daqing.host/assets/20250303225533287.png)
     
 
 
@@ -133,7 +133,7 @@ plt.close()
 ```
 
     
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303225559565.png)
+![](http://img.daqing.host/assets/20250303225559565.png)
    
 
 
@@ -173,7 +173,7 @@ plt.close()
 
 
     
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303225622061.png)
+![](http://img.daqing.host/assets/20250303225622061.png)
     
 
 
@@ -215,7 +215,7 @@ axes[1].plot(sqrt_one_minus_alphas_cumprod)
 plt.show()
 plt.close()
 ```
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303225639759.png)
+![](http://img.daqing.host/assets/20250303225639759.png)
     
 
 
@@ -250,7 +250,7 @@ plt.show()
 plt.close()
 ```
 
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303225658886.png)
+![](http://img.daqing.host/assets/20250303225658886.png)
     
 
 
@@ -398,7 +398,7 @@ class DiffusionModel(nn.Module):
 
 根据上述的推导过程，我们可以得到如下的训练算法：
 
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303225314524.jpg)
+![](http://img.daqing.host/assets/20250303225314524.jpg)
 
 
 ```python
@@ -460,13 +460,13 @@ plt.plot(loss_history)
 plt.show()
 ```
 
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303225724819.png)
+![](http://img.daqing.host/assets/20250303225724819.png)
 
 ### 采样过程
 
 在采样时，我们通过模型预测噪声 $\epsilon$ 进而得到均值 $\mu_t$，而方差是预先算好的，即 $\sigma_t = \beta_t I$ 据此再利用重参数化技巧进行采样，即可得到其采样的算法：
 
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303225414964.jpg)
+![](http://img.daqing.host/assets/20250303225414964.jpg)
 
 这里要稍微注意在 $t=1$ 时，$\bar{\alpha}_t$ 是没有定义的，因此设 $z=0$。
 
@@ -532,7 +532,7 @@ plt.show()
 plt.close()
 ```
 
-![](https://image-1304830922.cos.ap-shanghai.myqcloud.com/20250303225738693.png)
+![](http://img.daqing.host/assets/20250303225738693.png)
 
 如上，在本文中，我们使用了一个简单的 2D 瑞士卷分布作为例子，通过 DDPM 完成了其分布的学习。
 
